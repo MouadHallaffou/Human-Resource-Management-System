@@ -23,12 +23,28 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // return [
+        //     'name' => fake()->name(),
+        //     'email' => fake()->unique()->safeEmail(),
+        //     'email_verified_at' => now(),
+        //     'password' => static::$password ??= Hash::make('password'),
+        //     'remember_token' => Str::random(10),
+        // ];
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'name' => 'mouad hallaffou',
+            'email' => 'mouadhallaffou@gmail.com',
+            'password' => static::$password ??= Hash::make('00000000'), 
+            'image' => 'mouad.jpg',
+            'phone' => '0678634285',
+            'birthday' => '2000-11-10', 
+            'address' => 'res salwa tit mellil casablanca',
+            'recruitment_date' => '2025-10-10', 
+            'salary' => '15000', 
+            'status' => 'active',
+            // 'role_id' => 1, 
+            // 'department_id' => 1, 
+            // 'company_id' => 1, 
         ];
     }
 
