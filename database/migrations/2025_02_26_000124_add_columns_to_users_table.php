@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('image')->after('email')->nullable();
             $table->string('phone')->after('image');
-            $table->date('birthday')->after('phone')->default('1970-01-01'); 
+            $table->date('birthday')->after('phone')->default('2025-01-21'); 
             $table->string('address')->after('birthday');
-            $table->date('recruitment_date')->after('address');
+            $table->date('recruitment_date')->after('address')->default('2025-01-01');
             $table->decimal('salary', 10, 2)->after('recruitment_date');
             $table->string('status')->default('active')->after('salary');
-            // $table->foreignId('role_id')->after('status')->constrained();
-            // $table->foreignId('department_id')->after('role_id')->constrained();
-            // $table->foreignId('company_id')->after('department_id')->constrained();
+            $table->foreignId('role_id')->after('status')->constrained();
+            $table->foreignId('department_id')->after('role_id')->constrained()->onDelete('set null'); 
         });
     }
 
@@ -42,8 +41,6 @@ return new class extends Migration
             $table->dropColumn('role_id');
             $table->dropForeign(['department_id']);
             $table->dropColumn('department_id');
-            $table->dropForeign(['company_id']);
-            $table->dropColumn('company_id');
         });
     }
 };
