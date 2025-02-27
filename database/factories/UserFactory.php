@@ -42,9 +42,23 @@ class UserFactory extends Factory
             'recruitment_date' => '2025-10-10', 
             'salary' => '15000', 
             'status' => 'active',
-            // 'role_id' => 1, 
-            // 'department_id' => 1, 
-            // 'company_id' => 1, 
+            'role_id' => 1, 
+            'department_id' => 1, 
+            'contract_id'=> 1, 
+
+            'name' => 'annass',
+            'email' => 'annass@gmail.com',
+            'password' => static::$password ??= Hash::make('00000000'), 
+            'image' => 'mouad.jpg',
+            'phone' => '0123055789',
+            'birthday' => '2000-11-10', 
+            'address' => 'res salwa tit mellil casablanca',
+            'recruitment_date' => '2025-10-10', 
+            'salary' => '15000', 
+            'status' => 'active',
+            'role_id' => 2, 
+            'department_id' => 3,
+            'contract_id'=> 1, 
         ];
     }
 
