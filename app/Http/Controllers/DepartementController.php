@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Departement;
+use Spatie\Permission\Models\Role;
 use App\Http\Requests\StoreDepartementRequest;
 use App\Http\Requests\UpdateDepartementRequest;
-use Illuminate\Support\Facades\Auth;
 
 class DepartementController extends Controller
 {
@@ -16,7 +16,7 @@ class DepartementController extends Controller
      */
     public function index()
     {
-        $departements = Departement::latest()->paginate(6);
+        $departements = Departement::latest()->paginate(8);
         return view('departements.index', compact('departements'));
     }
 
@@ -26,7 +26,11 @@ class DepartementController extends Controller
     public function create()
     {
         $companies = Company::all();
-        return view('departements.create', compact('companies'));
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name', 'manager');
+        })->get();
+        
+        return view('departements.create', compact('companies', 'users'));
     }
 
     /**
@@ -34,14 +38,13 @@ class DepartementController extends Controller
      */
     public function store(StoreDepartementRequest $request)
     {
-
         $validatedData = $request->validated();
 
         Departement::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
-            'responsable_id' => $validatedData['responsable_id'],
             'company_id' => $validatedData['company_id'],
+            'responsable_id' => $validatedData['responsable_id'],
         ]);
 
         return redirect()->route('departements.index')
@@ -62,7 +65,11 @@ class DepartementController extends Controller
     public function edit(Departement $departement)
     {
         $companies = Company::all();
-        return view('departements.edit', compact('departement', 'companies'));
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name', 'manager');
+        })->get();
+        
+        return view('departements.edit', compact('departement', 'companies', 'users'));
     }
 
     /**
@@ -76,6 +83,7 @@ class DepartementController extends Controller
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
             'company_id' => $validatedData['company_id'],
+            'responsable_id' => $validatedData['responsable_id'],
         ]);
 
         return redirect()->route('departements.index')

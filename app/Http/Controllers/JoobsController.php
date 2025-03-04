@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Joobs;
+use App\Models\Departement;
 use App\Http\Requests\StoreJoobsRequest;
 use App\Http\Requests\UpdateJoobsRequest;
 
@@ -13,7 +14,7 @@ class JoobsController extends Controller
      */
     public function index()
     {
-        $joobs = Joobs::latest()->paginate(8); 
+        $joobs = Joobs::with('department')->paginate(10); 
         return view('joobs.index', compact('joobs')); 
     }
 
@@ -22,7 +23,8 @@ class JoobsController extends Controller
      */
     public function create()
     {
-        return view('joobs.create');
+        $departments = Departement::all();
+        return view('joobs.create', compact('departments'));
     }
 
     /**
@@ -31,7 +33,7 @@ class JoobsController extends Controller
     public function store(StoreJoobsRequest $request)
     {
         $validatedData = $request->validated();
-
+        // dd($validatedData);
         Joobs::create($validatedData);
 
         return redirect()->route('joobs.index') 
@@ -51,7 +53,8 @@ class JoobsController extends Controller
      */
     public function edit(Joobs $joob) 
     {
-        return view('joobs.edit', compact('joob')); 
+        $departments = Departement::all();
+        return view('joobs.edit', compact('joob', 'departments')); 
     }
 
     /**
@@ -70,11 +73,11 @@ class JoobsController extends Controller
     /**
      * Supprime un joob.
      */
-    public function destroy(Joobs $joob) // Utilisez $joob au lieu de $joobs
+    public function destroy(Joobs $joob) 
     {
         $joob->delete();
 
-        return redirect()->route('joobs.index') // Assurez-vous que la route est correctement nommée
+        return redirect()->route('joobs.index') 
             ->with('success', 'Joob supprimé avec succès.');
     }
 
