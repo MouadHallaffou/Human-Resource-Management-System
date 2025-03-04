@@ -4,16 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Departement;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -23,18 +23,19 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'image',           
-        'phone',           
-        'birthday',       
-        'address',         
-        'recruitment_date', 
-        'salary',          
-        'status',          
-        'role_id',         
-        'department_id',   
-        'contract_id', 
+        'image',
+        'phone',
+        'birthday',
+        'address',
+        'recruitment_date',
+        'salary',
+        'status',
+        // 'role_id',
+        'department_id',
+        'contract_id',
+        'job_id',
     ];
-    
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,19 +59,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function departement(){
-        return $this->belongsToMany(Departement::class);
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function formation()
+    public function department()
     {
-        return $this->belongsTo(Formation::class);
+        return $this->belongsTo(Departement::class, 'department_id');
     }
 
     public function contract()
     {
-        return $this->belongsTo(Contract::class);
+        return $this->belongsTo(Contract::class, 'contract_id');
     }
 
+    public function joob()
+    {
+        return $this->belongsTo(Joobs::class, 'job_id');
+    }
+
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class);
+    }
+    
 }

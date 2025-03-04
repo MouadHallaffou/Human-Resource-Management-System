@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
-            // $table->foreignId('responsable_id')->nullable()->constrained()->onDelete('set null'); 
+            $table->foreignId('responsable_id')->nullable()->constrained('users')->onDelete('set null'); 
             $table->timestamps();
         });
     }    

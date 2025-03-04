@@ -9,10 +9,23 @@ class Joobs extends Model
 {
     /** @use HasFactory<\Database\Factories\JoobsFactory> */
     use HasFactory;
-    protected $table = 'joobs'; 
-    
+    protected $table = 'joobs';
+
     protected $fillable = [
-        'title', 
-        'description', 
+        'title',
+        'description',
+        'department_id',
     ];
+
+    // Relation avec le modèle Department
+    public function department()
+    {
+        return $this->belongsTo(Departement::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+    
 }

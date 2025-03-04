@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Departement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class JoobsFactory extends Factory
         return [
             'title' => $this->faker->unique()->jobTitle, 
             'description' => $this->faker->paragraph,
+            'department_id' => Departement::factory(),
         ];
     }
 }
