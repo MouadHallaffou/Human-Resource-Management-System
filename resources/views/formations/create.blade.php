@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white shadow-md rounded-lg p-6 w-96">
+    <div class="bg-white shadow-md rounded-lg p-6  w-full max-w-4xl">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ajouter une formation</h1>
         <form action="{{ route('formations.store') }}" method="POST">
             @csrf
@@ -38,10 +38,23 @@
 
             <div class="mb-5">
                 <label for="certificate" class="block mb-2 text-sm font-medium text-gray-700">Certificat</label>
-                <input type="checkbox" name="certificate" id="certificate" class="mr-2"
-                    {{ old('certificate') ? 'checked' : '' }}>
-                <span>Oui</span>
+                <input type="hidden" name="certificate" value="0"> 
+                <input type="checkbox" name="certificate" id="certificate" class="mr-2" value="1">
+                <span class="text-gray-900">Oui</span>
                 @error('certificate')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-5">
+                <label for="users" class="block mb-2 text-sm font-medium text-gray-700">Assigner des utilisateurs</label>
+                <select name="users[]" id="users" multiple
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('users') border-red-500 @enderror">
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+                @error('users')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>

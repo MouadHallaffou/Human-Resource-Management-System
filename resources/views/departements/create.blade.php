@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white shadow-md rounded-lg p-6 w-96">
+    <div class="bg-white shadow-md rounded-lg p-6  w-full max-w-4xl">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Ajouter un département</h1>
         <form action="{{ route('departements.store') }}" method="POST">
             @csrf
@@ -22,6 +22,16 @@
                     <option value="">Sélectionnez une entreprise</option>
                     @foreach ($companies as $company)
                         <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-5">
+                <label for="responsable_id" class="block mb-2 text-sm font-medium text-gray-700">Responsable</label>
+                <select name="responsable_id" id="responsable_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out" required>
+                    <option value="">Sélectionnez le responsable</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" {{ old('responsable_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                     @endforeach
                 </select>
             </div>
