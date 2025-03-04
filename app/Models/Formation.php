@@ -32,9 +32,11 @@ class Formation extends Model
         return Carbon::parse($value)->format('d/m/Y');
     }
 
+    
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
-    
+        
 }
+
