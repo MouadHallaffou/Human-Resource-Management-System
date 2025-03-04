@@ -19,8 +19,8 @@ return new class extends Migration
             $table->date('recruitment_date')->after('address')->default('2025-01-01');
             $table->decimal('salary', 10, 2)->after('recruitment_date');
             $table->string('status')->default('active')->after('salary');
-            $table->foreignId('role_id')->after('status')->constrained();
-            $table->foreignId('department_id')->after('role_id')->constrained()->onDelete('set null'); 
+            // $table->foreignId('role_id')->after('status')->constrained();
+            $table->foreignId('department_id')->after('status')->constrained()->onDelete('set null'); 
         });
     }
 
@@ -37,8 +37,8 @@ return new class extends Migration
             $table->dropColumn('recruitment_date');
             $table->dropColumn('salary');
             $table->dropColumn('status');
-            $table->dropForeign(['role_id']);
-            $table->dropColumn('role_id');
+            // $table->dropForeign(['role_id']);
+            // $table->dropColumn('role_id');
             $table->dropForeign(['department_id']);
             $table->dropColumn('department_id');
         });
