@@ -88,6 +88,10 @@ class ContractController extends Controller
      */
     public function destroy(Contract $contract)
     {
+        if ($contract->document) {
+            Storage::disk('public')->delete($contract->document);
+        }
+
         $contract->delete();
 
         return redirect()->route('contracts.index')
