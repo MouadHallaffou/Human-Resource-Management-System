@@ -25,7 +25,7 @@ class DepartementFactory extends Factory
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
             'company_id' => Company::factory(),
-            // 'responsable_id' => 1,
+            'responsable_id' => User::factory(),
         ];
     }
 }
