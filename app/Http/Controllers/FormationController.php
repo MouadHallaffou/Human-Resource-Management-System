@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Formation;
 use App\Http\Requests\StoreFormationRequest;
 use App\Http\Requests\UpdateFormationRequest;
@@ -22,7 +23,8 @@ class FormationController extends Controller
      */
     public function create()
     {
-        return view('formations.create');
+        $users = User::all();
+        return view('formations.create', compact('users'));
     }
 
     /**
@@ -31,7 +33,12 @@ class FormationController extends Controller
     public function store(StoreFormationRequest $request)
     {
         $validatedData = $request->validated();
-        Formation::create($validatedData);
+
+        $formation = Formation::create($validatedData);
+
+        if ($request->has('users')) {
+            $formation->users()->attach($request->users);
+        }
 
         return redirect()->route('formations.index')->with('success', 'Formation créée avec succès.');
     }
@@ -49,7 +56,8 @@ class FormationController extends Controller
      */
     public function edit(Formation $formation)
     {
-        return view('formations.edit', compact('formation'));
+        $users = User::all();
+        return view('formations.edit', compact('formation', 'users'));
     }
 
     /**
@@ -58,7 +66,14 @@ class FormationController extends Controller
     public function update(UpdateFormationRequest $request, Formation $formation)
     {
         $validatedData = $request->validated();
+
         $formation->update($validatedData);
+
+        if ($request->has('users')) {
+            $formation->users()->sync($request->users);
+        } else {
+            $formation->users()->detach();
+        }
 
         return redirect()->route('formations.index')->with('success', 'Formation mise à jour avec succès.');
     }
