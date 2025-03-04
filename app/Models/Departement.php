@@ -14,7 +14,7 @@ class Departement extends Model
         'name',
         'description',
         'company_id',
-        // 'responsable_id',
+        'responsable_id',
     ];
 
     /**
@@ -39,6 +39,13 @@ class Departement extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+    /**
+     * Relation avec le modèle joob
+     */
+    public function joobs()
+    {
+        return $this->hasMany(Joobs::class, 'department_id');
     }
     
 }
