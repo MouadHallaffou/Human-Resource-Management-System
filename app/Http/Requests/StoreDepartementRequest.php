@@ -25,6 +25,7 @@ class StoreDepartementRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'company_id' => 'required|exists:companies,id',
+            'responsable_id' => 'required|exists:users,id',
         ];
     }
 }

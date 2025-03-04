@@ -24,10 +24,11 @@ class UpdateJoobsRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|unique:joobs,title,' . $this->joob->id,
             'description' => 'nullable|string',
+            'department_id' => 'required|exists:departements,id',
         ];
     }
 
-     /**
+    /**
      * Messages de validation personnalisés.
      */
     public function messages(): array
@@ -37,6 +38,8 @@ class UpdateJoobsRequest extends FormRequest
             'title.unique' => 'Ce titre de job existe déjà.',
             'title.max' => 'Le titre ne doit pas dépasser 255 caractères.',
             'description.string' => 'La description doit être une chaîne de caractères.',
+            'department_id.required' => 'Le département est obligatoire.',
+            'department_id.exists' => 'Le département sélectionné est invalide.',
         ];
     }
 }

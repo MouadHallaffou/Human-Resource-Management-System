@@ -22,8 +22,9 @@ class StoreJoobsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|unique:joobs|max:255',
+            'title' => 'required|string|max:255|unique:joobs,title',
             'description' => 'nullable|string',
+            'department_id' => 'required|exists:departements,id',
         ];
     }
 

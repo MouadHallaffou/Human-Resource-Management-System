@@ -25,9 +25,11 @@ class StoreFormationRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'location' => 'required|in:online,offline',
-            'certificate' => 'nullable|boolean',
+            'certificate' => 'required|boolean', 
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
+            'users' => 'nullable|array',
+            'users.*' => 'exists:users,id',
         ];
     }
 
