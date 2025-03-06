@@ -12,11 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('carieres', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('newPosition'); 
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('date_position');
-            $table->timestamps(); 
+            $table->string('contract')->nullable();
+            $table->string('role')->nullable();
+            $table->string('departement')->nullable();
+            $table->date('rectement_date')->nullable();
+            $table->float('salary')->nullable();
+            $table->timestamps();
         });
     }
 

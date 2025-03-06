@@ -11,42 +11,44 @@ class RolePermissionSeeder extends Seeder
 {
     public function run()
     {
-        // Définition des permissions
         $permissions = [
-            'create-employe', 'edit-employe', 'delete-employe', 'view-employe',
-            'create-department', 'edit-department', 'delete-department', 'view-department',
-            'create-formation', 'edit-formation', 'delete-formation', 'view-formation',
-            'create-contract', 'edit-contract', 'delete-contract', 'view-contract',
-            'approve-leave', 'reject-leave', 'manage-payroll',
-            'generate-reports','view-users', 'view-departments', 'view-formations', 
-            'view-contracts','view-jobs', 'view-career', 'view-hierarchy',
+            'view-users',
+            'view-departments',
+            'view-formations',
+            'view-contracts',
+            'view-jobs',
+            'view-career',
+            'view-hierarchy',
+            'view-demandes', 
+            'create-demande-conge', 
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission, 'guard_name' => 'web']);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        $adminRole = Role::create(['name' => 'Admin', 'guard_name' => 'web']);
-        $adminRole->syncPermissions($permissions); 
-
-        $rhManagerRole = Role::create(['name' => 'RH Manager', 'guard_name' => 'web']);
-        $rhManagerRole->syncPermissions([
-            'create-employe', 'edit-employe', 'delete-employe', 'view-employe',
-            'approve-leave', 'reject-leave', 'manage-payroll',
+        $adminRole = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
+        $adminRole->syncPermissions([
             'view-users', 'view-departments', 'view-formations', 'view-contracts',
+            'view-jobs', 'view-career', 'view-hierarchy', 'view-demandes','create-demande-conge', 
         ]);
 
-        $managerRole = Role::create(['name' => 'Manager', 'guard_name' => 'web']);
+        $rhManagerRole = Role::firstOrCreate(['name' => 'RH Manager', 'guard_name' => 'web']);
+        $rhManagerRole->syncPermissions([
+            'view-users', 'view-departments', 'view-formations', 'view-contracts',
+            'view-jobs', 'view-career', 'view-hierarchy', 'view-demandes','create-demande-conge', 
+        ]);
+
+        $managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'web']);
         $managerRole->syncPermissions([
-            'view-employe', 'view-department', 'view-formation', 'view-contract',
-            'view-jobs', 'generate-reports',
+            'view-users', 'view-departments', 'view-formations', 'view-contracts',
+            'view-jobs', 'view-career', 'view-hierarchy', 'view-demandes', 'create-demande-conge', 
         ]);
 
-        $employeeRole = Role::create(['name' => 'Employé', 'guard_name' => 'web']);
+        $employeeRole = Role::firstOrCreate(['name' => 'Employé', 'guard_name' => 'web']);
         $employeeRole->syncPermissions([
-            'view-career', 'view-hierarchy','view-employe',
+            'view-career', 'view-hierarchy', 'view-users', 'create-demande-conge',
         ]);
-
 
         $user = User::find(1);
         if ($user) {

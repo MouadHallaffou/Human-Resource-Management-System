@@ -12,10 +12,11 @@ class CariereController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($userId)
     {
-        $carieres = Cariere::with('user')->get();
-        return view('carieres.index', compact('carieres'));
+        $user = User::findOrFail($userId);
+        $user->load('roles', 'department', 'contract', 'joob');
+        return view('users.show', compact('user'));
     }
 
     /**
@@ -56,7 +57,7 @@ class CariereController extends Controller
      */
     public function edit(Cariere $cariere)
     {
-         $users = User::all();
+        $users = User::all();
         return view('carieres.edit', compact('cariere', 'users'));
     }
 
@@ -65,7 +66,7 @@ class CariereController extends Controller
      */
     public function update(UpdateCariereRequest $request, Cariere $cariere)
     {
-         $request->validate([
+        $request->validate([
             'newPosition' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
             'date_position' => 'required|date',

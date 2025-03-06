@@ -78,7 +78,7 @@
             </div>
 
             <!-- Contract Details -->
-            <div class="px-8 py-6">
+            <div id="details" class="px-8 py-6">
                 <div class="flex items-center mb-4">
                     <div class="w-6 h-6 bg-violet-600 rounded-full flex items-center justify-center mr-3">
                         <div class="w-2 h-2 bg-white rounded-full"></div>
@@ -287,20 +287,30 @@
     </div>
 
     @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const toggleButton = document.getElementById('toggleCursusForm');
-                const cursusFormContainer = document.getElementById('cursusFormContainer');
-                const form = document.getElementById('cursusForm');
-                const cancelButton = document.getElementById('cancelButton');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleCursusForm');
+            const cursusFormContainer = document.getElementById('cursusFormContainer');
+            const form = document.getElementById('cursusForm');
+            const cancelButton = document.getElementById('cancelButton');
+            const details = document.getElementById('details');
+
+            if (toggleButton && cursusFormContainer && form && cancelButton && details) {
                 toggleButton.addEventListener('click', function() {
                     cursusFormContainer.classList.toggle('hidden');
+                    details.classList.toggle('hidden');
                 });
+
                 cancelButton.addEventListener('click', function() {
                     form.reset();
                     cursusFormContainer.classList.add('hidden');
+                    details.classList.remove('hidden');
                 });
-            });
-        </script>
+            } else {
+                console.error('Un ou plusieurs éléments nécessaires sont manquants dans le DOM.');
+            }
+        });
+    </script>
     @endpush
-@endsection
+
+@endsection          

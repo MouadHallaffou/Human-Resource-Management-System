@@ -14,10 +14,15 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'create employe', 'edit employe', 'delete employe', 'view employe',
-            'create département', 'edit département', 'delete département', 'view département',
-            'create contrats', 'edit contrats', 'delete contrats', 'view contrats',
-            'approve leave', 'reject leave', 'manage payroll', 'generate reports'
+            'view-users',
+            'view-departments',
+            'view-formations',
+            'view-contracts',
+            'view-jobs',
+            'view-career',
+            'view-hierarchy',
+            'view-demandes', 
+            'create-demande-conge', 
         ];
 
         foreach ($permissions as $permission) {

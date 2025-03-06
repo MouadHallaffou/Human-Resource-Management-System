@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Joobs;
+use App\Models\Cariere;
 use App\Models\Contract;
 use App\Models\Departement;
 use Illuminate\Http\Request;
@@ -12,14 +13,24 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with(['roles', 'department', 'contract', 'joob'])->paginate(10);
+        $user = auth()->user();
+        if ($user->hasRole('Employé')) {
+            $users = User::with(['roles', 'department', 'contract', 'joob'])
+                ->where('id', $user->id)
+                ->paginate(10);
+        } else {
+            $users = User::with(['roles', 'department', 'contract', 'joob'])->paginate(10);
+        }
+
         return view('users.index', compact('users'));
     }
+
 
     public function create()
     {
@@ -42,10 +53,10 @@ class UserController extends Controller
             'recruitment_date' => 'nullable|date',
             'salary' => 'nullable|numeric',
             'status' => 'required|in:actif,inactif',
-            'role_id' => 'required|integer',
-            'department_id' => 'required|integer',
-            'contract_id' => 'nullable|integer',
-            'job_id' => 'required|integer',
+            'role_id' => 'required|integer|exists:roles,id',
+            'department_id' => 'required|integer|exists:departements,id',
+            'contract_id' => 'nullable|integer|exists:contracts,id',
+            'job_id' => 'required|integer|exists:joobs,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -73,19 +84,33 @@ class UserController extends Controller
             'image' => $imagePath,
         ]);
 
+        if ($user) {
+            $department = Departement::find($request->department_id)->name;
+            $role = Role::find($request->role_id)->name;
+            $contract = Contract::find($request->contract_id)->typeContract;
+
+            Cariere::create([
+                'user_id' => $user->id,
+                'date_position' => now(),
+                'recruitment_date' => $user->recruitment_date,
+                'salary' => $user->salary,
+                'departement' => $department,
+                'role' => $role,
+                'contract' => $contract,
+            ]);
+        }
+
         $role = Role::find($request->role_id);
         $user->assignRole($role);
 
         // Mail::to($user->email)->send(new UserCredentialsMail($user, $password));
-
         return redirect()->route('users.index')->with('success', 'Employé ajouté avec succès.');
     }
 
-
     public function show(User $user)
     {
-        $user->load('roles', 'department', 'contract', 'joob');
-        return view('users.show', compact('user'));
+        // $user->load('roles', 'department', 'contract', 'joob');
+        // return view('users.show');
     }
 
     public function edit(User $user)

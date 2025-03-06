@@ -14,6 +14,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
@@ -37,6 +38,7 @@
 
                     <!-- Liens conditionnels -->
                     <div class="flex flex-col flex-1 gap-3">
+
                         @can('view-users')
                             <a href="{{ route('users.index') }}"
                                 class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
@@ -77,8 +79,24 @@
                             </a>
                         @endcan
 
+                        {{-- @can('view-demande-conge') --}}
+                            <a href="{{ route('conges.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Demande Conge
+                            </a>
+                        {{-- @endcan --}}
+
+                        {{-- @can('view-demandes') --}}
+                            <a href="{{ route('conges.actions') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                All demandes
+                            </a>
+                        {{-- @endcan --}}
+
                         @can('view-career')
-                            <a href="{{ route('users.index') }}"
+                            <a href="{{ route('users.cariere', auth()->user()->id) }}"
                                 class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
                                 <i class="fas fa-chart-line mr-2"></i>
                                 Cariere
@@ -92,6 +110,7 @@
                                 Hierarchy
                             </a>
                         @endcan
+
                     </div>
                 </nav>
             </div>
