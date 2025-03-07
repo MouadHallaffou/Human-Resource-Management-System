@@ -47,5 +47,9 @@ class Departement extends Model
     {
         return $this->hasMany(Joobs::class, 'department_id');
     }
-    
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'responsable_id');
+    }
 }

@@ -36,7 +36,7 @@
                 <select name="department_id" id="department_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('department_id') border-red-500 @enderror"
                     required>
-                    <option value="">Sélectionnez un département</option>
+                    <option value="">-- Sélectionnez un département --</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" {{ old('department_id', $joob->department_id) == $department->id ? 'selected' : '' }}>
                             {{ $department->name }}

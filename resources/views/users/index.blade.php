@@ -16,6 +16,7 @@
                 <th scope="col" class="px-3 py-2 text-center">Département</th>
                 <th scope="col" class="px-3 py-2 text-center">Contrat</th>
                 <th scope="col" class="px-3 py-2 text-center">Emplois</th>
+                <th scope="col" class="px-3 py-2 text-center">Grade</th>
                 <th scope="col" class="px-3 py-2 text-center">Actions</th>
             </tr>
         </thead>
@@ -44,22 +45,27 @@
                     @endforeach
                 </td>
                 <td class="px-3 py-2 text-center">
-                    {{ $user->department->name ?? 'Non défini' }}
+                    {{ $user->department->name ?? '--' }}
                 </td>
                 <td class="px-3 py-2 text-center">
-                    {{ $user->contract->typeContract ?? 'Non défini' }}
+                    {{ $user->contract->typeContract ?? '--' }}
                 </td>
                 <td class="px-3 py-2 text-center">
-                    {{ $user->joob->title ?? 'Non défini' }}
+                    {{ $user->grade ?? '--' }}
+                </td>
+                <td class="px-3 py-2 text-center">
+                    {{ $user->joob->title ?? '--' }}
                 </td>
                 <td class="px-3 py-2 text-center whitespace-nowrap">
                     <a href="{{ route('users.cariere', $user->id) }}" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Voir</a>
+                    @if(auth()->user()->hasRole('Manager') || auth()->user()->hasRole('RH Manager') || auth()->user()->hasRole('Admin'))
                     <a href="{{ route('users.edit', $user) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 me-2 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Éditer</a>
                     <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 font-medium rounded-lg text-sm px-2 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Supprimer</button>
                     </form>
+                    @endif
                 </td>
             </tr>
             @endforeach

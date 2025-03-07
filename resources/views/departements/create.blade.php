@@ -19,7 +19,7 @@
             <div class="mb-5">
                 <label for="company_id" class="block mb-2 text-sm font-medium text-gray-700">Entreprise</label>
                 <select name="company_id" id="company_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out" required>
-                    <option value="">Sélectionnez une entreprise</option>
+                    <option value="">-- Sélectionnez une entreprise --</option>
                     @foreach ($companies as $company)
                         <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                     @endforeach
@@ -29,7 +29,7 @@
             <div class="mb-5">
                 <label for="responsable_id" class="block mb-2 text-sm font-medium text-gray-700">Responsable</label>
                 <select name="responsable_id" id="responsable_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out" required>
-                    <option value="">Sélectionnez le responsable</option>
+                    <option value="">-- Sélectionnez le responsable --</option>
                     @foreach ($users as $user)
                         <option value="{{ $user->id }}" {{ old('responsable_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
                     @endforeach

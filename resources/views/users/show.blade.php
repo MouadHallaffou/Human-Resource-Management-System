@@ -21,7 +21,7 @@
                 </div>
                 <h2 class="mt-3 text-lg font-medium text-gray-500">{{ $user->name }}</h2>
                 <p class="text-gray-500 text-sm">{{ $user->email }}</p>
-                <span class="mt-1 text-violet-600 text-md">{{ ucfirst($user->status) }}</span>
+                <span class="mt-1 text-green-600 text-md">{{ ucfirst($user->status) }}</span>
             </div>
 
             <!-- Timeline -->
@@ -40,7 +40,7 @@
                             <span class="text-xs mt-1 text-gray-400">{{ $user->recruitment_date }}</span>
                             <div class="mt-2 text-center w-32">
                                 <p class="text-sm text-gray-600 font-medium">
-                                    {{ $user->joob ? $user->joob->title : 'Non défini' }}</p>
+                                    {{ $user->joob ? $user->joob->title : '--' }}</p>
                             </div>
                         </div>
 
@@ -51,11 +51,11 @@
                                 <div class="w-2 h-2 bg-white rounded-full"></div>
                             </div>
                             <span
-                                class="text-xs mt-1 text-gray-400">{{ $user->contract->start_date ?? 'Non défini' }}</span>
+                                class="text-xs mt-1 text-gray-400">{{ $user->contract->start_date ?? '--' }}</span>
                             <div class="mt-2 text-center w-32">
                                 <p class="text-sm text-gray-600 font-medium">Contrat</p>
                                 <p class="text-xs text-gray-500">Type:
-                                    {{ $user->contract ? $user->contract->typeContract : 'Non défini' }}</p>
+                                    {{ $user->contract ? $user->contract->typeContract : '--' }}</p>
                             </div>
                         </div>
 
@@ -65,10 +65,10 @@
                                 class="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center">
                                 <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
                             </div>
-                            <span class="text-xs mt-1 text-gray-400">{{ $user->certification_date ?? 'Non défini' }}</span>
+                            <span class="text-xs mt-1 text-gray-400">{{ $user->certification_date ?? '--' }}</span>
                             <div class="mt-2 text-center w-32">
                                 <p class="text-sm text-gray-600 font-medium">Certification:
-                                    {{ $user->certification ?? 'Non défini' }}</p>
+                                    {{ $user->certification ?? '--' }}</p>
                                 <p class="text-xs text-gray-500">Certified</p>
                                 <p class="text-xs text-gray-500">Actif</p>
                             </div>
@@ -86,7 +86,7 @@
                     <div>
                         <h3 class="text-lg font-medium text-gray-600">Contrat</h3>
                         <p class="text-sm text-gray-600">Type |
-                            {{ $user->contract ? $user->contract->typeContract : 'Non défini' }}</p>
+                            {{ $user->contract ? $user->contract->typeContract : '--' }}</p>
                     </div>
                 </div>
 
@@ -105,7 +105,7 @@
                                 <span class="text-sm text-gray-600">Date</span>
                             </div>
                             <div class="flex items-center">
-                                <span class="text-sm text-gray-600">{{ $user->recruitment_date ?? 'Non défini' }}</span>
+                                <span class="text-sm text-gray-600">{{ $user->recruitment_date ?? '--' }}</span>
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                             </div>
                             <div class="flex items-center">
                                 <span
-                                    class="text-sm text-gray-600">{{ $user->department ? $user->department->name : 'Non défini' }}</span>
+                                    class="text-sm text-gray-600">{{ $user->department ? $user->department->name : '--' }}</span>
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                             </div>
                             <div class="flex items-center">
                                 <span
-                                    class="text-sm text-gray-600">{{ $user->department && $user->department->manager ? $user->department->manager->name : 'Non défini' }}</span>
+                                    class="text-sm text-gray-600">{{ $user->department && $user->department->manager ? $user->department->manager->name : '--' }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 ml-2"
                                     viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -171,7 +171,7 @@
                                 <span class="text-sm text-gray-600">Grade</span>
                             </div>
                             <div class="flex items-center">
-                                <span class="text-sm text-gray-600">{{ $user->grade ?? 'Non défini' }}</span>
+                                <span class="text-sm text-gray-600">{{ $user->grade ?? '--' }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 ml-2"
                                     viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"

@@ -10,10 +10,12 @@ use App\Models\Departement;
 use Illuminate\Http\Request;
 use App\Mail\UserCredentialsMail;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -42,25 +44,9 @@ class UserController extends Controller
         return view('users.create', compact('roles', 'departments', 'joobs', 'contracts'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:15',
-            'birthday' => 'nullable|date',
-            'address' => 'nullable|string|max:255',
-            'recruitment_date' => 'nullable|date',
-            'salary' => 'nullable|numeric',
-            'status' => 'required|in:actif,inactif',
-            'role_id' => 'required|integer|exists:roles,id',
-            'department_id' => 'required|integer|exists:departements,id',
-            'contract_id' => 'nullable|integer|exists:contracts,id',
-            'job_id' => 'required|integer|exists:joobs,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
 
+    public function store(StoreUserRequest $request)
+    {
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('users', 'public');
@@ -82,6 +68,7 @@ class UserController extends Controller
             'job_id' => $request->job_id,
             'password' => Hash::make($password),
             'image' => $imagePath,
+            'grade' => $request->grade,
         ]);
 
         if ($user) {
@@ -107,12 +94,6 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Employé ajouté avec succès.');
     }
 
-    public function show(User $user)
-    {
-        // $user->load('roles', 'department', 'contract', 'joob');
-        // return view('users.show');
-    }
-
     public function edit(User $user)
     {
         $roles = Role::where('name', '!=', 'Admin')->get();
@@ -123,24 +104,9 @@ class UserController extends Controller
         return view('users.edit', compact('user', 'roles', 'departments', 'contracts', 'joobs'));
     }
 
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:15',
-            'birthday' => 'nullable|date',
-            'address' => 'nullable|string|max:255',
-            'recruitment_date' => 'nullable|date',
-            'salary' => 'nullable|numeric',
-            'status' => 'required|in:actif,inactif',
-            'role_id' => 'required|integer',
-            'department_id' => 'required|integer',
-            'contract_id' => 'nullable|integer',
-            'job_id' => 'required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
 
+    public function update(UpdateUserRequest $request, User $user)
+    {
         $imagePath = $user->image;
         if ($request->hasFile('image')) {
             if ($user->image && Storage::disk('public')->exists($user->image)) {
@@ -162,6 +128,7 @@ class UserController extends Controller
             'contract_id' => $request->contract_id,
             'job_id' => $request->job_id,
             'image' => $imagePath,
+            'grade' => $request->grade, 
         ]);
 
         $role = Role::find($request->role_id);
@@ -169,6 +136,14 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'Employé mis à jour avec succès.');
     }
+
+
+    public function show(User $user)
+    {
+        // $user->load('roles', 'department', 'contract', 'joob');
+        // return view('users.show');
+    }
+
 
     public function destroy(User $user)
     {

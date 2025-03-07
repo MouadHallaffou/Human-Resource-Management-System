@@ -122,7 +122,7 @@
                         <label for="status" class="block mb-2 text-sm font-medium text-gray-700">Statut :</label>
                         <select name="status" id="status"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('status') border-red-500 @enderror">
-                            <option value="">Sélectionnez un statut</option>
+                            <option value="">-- Sélectionnez un statut --</option>
                             <option value="actif" {{ old('status', $user->status) == 'actif' ? 'selected' : '' }}>Actif
                             </option>
                             <option value="inactif" {{ old('status', $user->status) == 'inactif' ? 'selected' : '' }}>
@@ -139,7 +139,7 @@
                         <select name="role_id" id="role_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
                             required>
-                            <option value="">Sélectionnez un rôle</option>
+                            <option value="">-- Sélectionnez un rôle --</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}"
                                     {{ (old('role_id') ?? ($user->roles->first()->id ?? '')) == $role->id ? 'selected' : '' }}>
@@ -163,7 +163,7 @@
                         <select name="department_id" id="department_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('department_id') border-red-500 @enderror"
                             required>
-                            <option value="">Sélectionnez un département</option>
+                            <option value="">-- Sélectionnez un département --</option>
                             @foreach ($departments as $department)
                                 <option value="{{ $department->id }}"
                                     {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
@@ -182,7 +182,7 @@
                         <select name="job_id" id="job_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('job_id') border-red-500 @enderror"
                             required>
-                            <option value="">Sélectionnez un job</option>
+                            <option value="">-- Sélectionnez un job --</option>
                             <!-- Les options seront ajoutées dynamiquement via JavaScript -->
                         </select>
                         @error('job_id')
@@ -191,14 +191,14 @@
                     </div>
                 </div>
 
-                <!-- Ligne 7 : Contrat -->
+                <!-- Ligne 7 : Contrat et grade-->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
                     <div>
                         <label for="contract_id" class="block mb-2 text-sm font-medium text-gray-700">Contrat :</label>
                         <select name="contract_id" id="contract_id"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('contract_id') border-red-500 @enderror"
                             required>
-                            <option value="">Sélectionnez un contrat</option>
+                            <option value="">-- Sélectionnez un contrat --</option>
                             @foreach ($contracts as $contract)
                                 <option value="{{ $contract->id }}"
                                     {{ old('contract_id', $user->contract_id) == $contract->id ? 'selected' : '' }}>
@@ -210,6 +210,22 @@
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div>
+                        <label for="grade" class="block mb-2 text-sm font-medium text-gray-700">Statut :</label>
+                        <select name="grade" id="grade"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('grade') border-red-500 @enderror">
+                            <option value="">-- Sélectionnez un statut --</option>
+                            <option value="debutant" {{ old('grade', $user->grade) == 'debutant' ? 'selected' : '' }}>Débutant</option>
+                            <option value="junior" {{ old('grade', $user->grade) == 'junior' ? 'selected' : '' }}>Junior</option>
+                            <option value="senior" {{ old('grade', $user->grade) == 'senior' ? 'selected' : '' }}>Senior</option>
+                            <option value="expert" {{ old('grade', $user->grade) == 'expert' ? 'selected' : '' }}>Expert</option>
+                        </select>
+                        @error('grade')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
                 </div>
 
                 <!-- Boutons -->

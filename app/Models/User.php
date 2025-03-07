@@ -30,10 +30,10 @@ class User extends Authenticatable
         'recruitment_date',
         'salary',
         'status',
-        // 'role_id',
         'department_id',
         'contract_id',
         'job_id',
+        'grade',
     ];
 
 
@@ -83,5 +83,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Formation::class);
     }
-    
+
+    public function manager()
+    {
+        return $this->department ? $this->department->manager : null;
+    }
+ 
 }
