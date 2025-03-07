@@ -9,6 +9,27 @@ use Carbon\Carbon;
 
 class CongeController extends Controller
 {
+    public function index()
+    {
+        $user = auth()->user();
+        $conges = Conge::where('user_id', $user->id)->get();
+
+        // Calcul du solde de congés
+        $dateEmbauche = Carbon::parse($user->recruitment_date);
+        $aujourdHui = Carbon::today();
+        $moisTravail = $dateEmbauche->diffInMonths($aujourdHui);
+        $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
+
+        if ($anneesTravail >= 1) {
+            $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
+        } else {
+            $joursDisponibles = $moisTravail * 1.5;
+        }
+
+        return view('conges.index', compact('conges', 'joursDisponibles'));
+    }
+
+
     public function create()
     {
         return view('conges.create');
@@ -16,37 +37,64 @@ class CongeController extends Controller
 
     public function store(Request $request)
     {
+        $utilisateur = auth()->user();
+        $aujourdHui = Carbon::today();
+
+        $dateDebut = Carbon::parse($request->start_date);
+        $dateFin = Carbon::parse($request->end_date);
+
+        // Calcul des jours de congé en excluant les weekends
+        $totalJours = $dateDebut->diffInDaysFiltered(function ($date) {
+            return !$date->isWeekend(); // Exclure weekend
+        }, $dateFin);
+
         $request->validate([
-            'start_date' => 'required|date',
+            'start_date' => 'required|date|after_or_equal:' . $aujourdHui->addWeek(),
             'end_date' => 'required|date|after:start_date',
             'cause' => 'nullable|string',
         ]);
 
-        $startDate = Carbon::parse($request->start_date);
-        $endDate = Carbon::parse($request->end_date);
-        $totalDays = $startDate->diffInDays($endDate);
+        // Calcul des jours de congé disponibles
+        $dateEmbauche = Carbon::parse($utilisateur->recruitment_date);
+        $moisTravail = $dateEmbauche->diffInMonths($aujourdHui);
+        $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
 
+        if ($anneesTravail >= 1) {
+            $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
+        } else {
+            $joursDisponibles = $moisTravail * 1.5;
+        }
+
+        // Vérifier si le nombre de jours demandés dépasse le solde disponible
+        if ($totalJours > $joursDisponibles) {
+            return redirect()->route('conges.create')->with('error_conge', 'La durée de votre demande dépasse votre solde de congés disponible : ' . intval($joursDisponibles) . ' jours');
+        }
+
+        // Définir les statuts de validation
+        if ($utilisateur->hasRole('Manager')) {
+            $statutManager = 'approved';
+        } else {
+            $statutManager = 'pending';
+        }
+
+        $statutRhManager = 'pending';
+        $statutDemandeur = 'pending';
+
+        // Créer la demande de congé
         Conge::create([
-            'user_id' => auth()->id(),
+            'user_id' => $utilisateur->id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'total_days' => $totalDays,
-            'status_manager' => 'pending',
-            'status_rh_manager' => 'pending',
-            'status_demandeur' => 'pending',
+            'total_days' => $totalJours,
+            'status_manager' => $statutManager,
+            'status_rh_manager' => $statutRhManager,
+            'status_demandeur' => $statutDemandeur,
             'cause' => $request->cause,
         ]);
 
         return redirect()->route('conges.index')->with('success', 'Demande de congé soumise avec succès.');
     }
 
-    
-    public function index()
-    {
-        $user = auth()->user();
-        $conges = Conge::where('user_id', $user->id)->get();
-        return view('conges.index', compact('conges'));
-    }
 
     // Valider la demande par le manager
     public function approveByManager($id)
@@ -112,19 +160,41 @@ class CongeController extends Controller
         $conge->update(['status_demandeur' => $statusDemandeur]);
     }
 
-
     public function actions()
     {
         $user = auth()->user();
-
         if ($user->hasRole('Manager')) {
-            $conges = Conge::where('status_manager', 'pending')->get();
-        } elseif ($user->hasRole('RH Manager')) {
+            //departement du manager
+            $department = $user->department;
+            if (!$department) {
+                return redirect()->route('conges.index')->with('error', 'Vous n\'êtes pas assigné à un département.');
+            }
+            //demandes de congé ce département en attente
+            $conges = Conge::whereHas('user', function ($query) use ($department) {
+                $query->where('department_id', $department->id);
+            })->where('status_manager', 'pending')->get();
+        }
+        // si l'utilisateur : RH Manager
+        elseif ($user->hasRole('RH Manager')) {
+            // demandes RHs en attente de validation par RH
             $conges = Conge::where('status_rh_manager', 'pending')->get();
-        } else {
-            return redirect()->route('conges.index')->with('error', 'Vous n avez pas les permissions a cette page.');
+        }
+        // Sinon, accès refusé
+        else {
+            return redirect()->route('conges.index')->with('error', 'Vous n\'avez pas les permissions pour accéder à cette page.');
         }
 
         return view('conges.actions', compact('conges'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Conge $conge)
+    {
+        $conge->delete();
+
+        return redirect()->route('conges.index')
+            ->with('success', 'conge supprimée avec succès.');
     }
 }
