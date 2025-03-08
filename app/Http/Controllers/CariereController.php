@@ -13,19 +13,14 @@ class CariereController extends Controller
      * Display a listing of the resource.
      */
     // Dans CarriereController.php
-public function index($userId)
-{
-    // Récupérer l'utilisateur avec ses relations
-    $user = User::with(['roles', 'department', 'contract', 'joob', 'carieres', 'formations'])->findOrFail($userId);
-    
-    // Récupérer l'historique des carrières trié par date
-    $carieres = $user->carieres()->orderBy('date_position', 'desc')->get();
-    
-    // Récupérer les formations sans tri pour l'instant
-    $formations = $user->formations()->get();
-    
-    return view('users.show', compact('user', 'carieres', 'formations'));
-}
+    public function index($userId)
+    {
+        $user = User::with(['roles', 'department', 'contract', 'joob', 'carieres', 'formations'])->findOrFail($userId);
+        $carieres = $user->carieres()->orderBy('date_position', 'desc')->get();
+        $formations = $user->formations()->get();
+
+        return view('users.show', compact('user', 'carieres', 'formations'));
+    }
 
     /**
      * Show the form for creating a new resource.
