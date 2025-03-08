@@ -4,7 +4,7 @@
 <a href="{{ route('users.create') }}" class="m-8 text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Créer un utilisateur</a>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
-    <table class="min-w-full text-sm text-left rtl:text-right text-gray-100 dark:text-gray-100">
+    <table id="datatable_users" class="min-w-full text-sm text-left rtl:text-right text-gray-100 dark:text-gray-100">
         <thead class="text-xs text-gray-100 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-100">
             <tr>
                 <th scope="col" class="px-3 py-2">ID</th>
@@ -57,13 +57,13 @@
                     {{ $user->joob->title ?? '--' }}
                 </td>
                 <td class="px-3 py-2 text-center whitespace-nowrap">
-                    <a href="{{ route('users.cariere', $user->id) }}" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Voir</a>
+                    <a href="{{ route('users.cariere', $user->id) }}" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-3 py-2.5 me-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Voir</a>
                     @if(auth()->user()->hasRole('Manager') || auth()->user()->hasRole('RH Manager') || auth()->user()->hasRole('Admin'))
-                    <a href="{{ route('users.edit', $user) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 me-2 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Éditer</a>
+                    <a href="{{ route('users.edit', $user) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 me-2 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edite</a>
                     <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 font-medium rounded-lg text-sm px-2 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Supprimer</button>
+                        <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 font-medium rounded-lg text-sm px-2 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
                     </form>
                     @endif
                 </td>
@@ -72,6 +72,17 @@
         </tbody>
     </table>
 </div>
+
+{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#datatable_users').DataTable({
+            paging: false,
+            searching: true
+        });
+    });
+</script> --}}
 
 {{ $users->links() }}
 @endsection

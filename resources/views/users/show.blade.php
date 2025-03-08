@@ -3,6 +3,7 @@
 @section('content')
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-auto">
+            <!-- Header -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h1 class="text-xl font-medium text-gray-700">Cariere</h1>
                 <a href="{{ route('users.index') }}" class="text-gray-700 hover:text-gray-700">
@@ -29,50 +30,72 @@
                 <div class="relative">
                     <div class="absolute h-1 bg-violet-600 top-4 left-0 right-0 z-0"></div>
 
-                    <!-- Timeline -->
+                    <!-- Timeline Items -->
                     <div class="flex justify-between relative z-10">
-                        <!-- Job -->
-                        <div class="flex flex-col items-center">
-                            <div
-                                class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center border-2 border-white">
-                                <div class="w-2 h-2 bg-white rounded-full"></div>
-                            </div>
-                            <span class="text-xs mt-1 text-gray-400">{{ $user->recruitment_date }}</span>
-                            <div class="mt-2 text-center w-32">
-                                <p class="text-sm text-gray-600 font-medium">
-                                    {{ $user->joob ? $user->joob->title : '--' }}</p>
-                            </div>
-                        </div>
+                        @php
+                            // Collect all timeline items with dates to sort them properly
+                            $timelineItems = collect();
+                            
+                            // Add careers to timeline
+                            foreach($carieres as $carriere) {
+                                $timelineItems->push([
+                                    'date' => \Carbon\Carbon::parse($carriere->date_position),
+                                    'type' => 'career',
+                                    'title' => $carriere->position,
+                                    'description' => $carriere->description,
+                                    'is_completed' => true
+                                ]);
+                            }
+                            
+                            // Add contract to timeline if exists
+                            if($user->contract) {
+                                $timelineItems->push([
+                                    'date' => \Carbon\Carbon::parse($user->contract->start_date ?? now()),
+                                    'type' => 'contract',
+                                    'title' => 'Contrat',
+                                    'description' => 'Type: ' . $user->contract->typeContract,
+                                    'is_completed' => true
+                                ]);
+                            }
+                            
+                            // Add formations to timeline
+                            foreach($formations as $formation) {
+                                $timelineItems->push([
+                                    'date' => \Carbon\Carbon::parse($formation->date_formation),
+                                    'type' => 'formation',
+                                    'title' => $formation->title,
+                                    'description' => $formation->is_completed ? 'Terminée' : 'En cours',
+                                    'is_completed' => $formation->is_completed
+                                ]);
+                            }
+                            
+                            // Add certification if exists
+                            if($user->certification_date) {
+                                $timelineItems->push([
+                                    'date' => \Carbon\Carbon::parse($user->certification_date),
+                                    'type' => 'certification',
+                                    'title' => 'Certification: ' . $user->certification,
+                                    'description' => $user->certification_status ?? 'Actif',
+                                    'is_completed' => false
+                                ]);
+                            }
+                            
+                            // Sort timeline items by date
+                            $timelineItems = $timelineItems->sortBy('date');
+                        @endphp
 
-                        <!-- Contract -->
-                        <div class="flex flex-col items-center">
-                            <div
-                                class="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center border-2 border-white">
-                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                        @foreach($timelineItems as $item)
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 rounded-full {{ $item['is_completed'] ? 'bg-violet-600' : 'bg-white border border-gray-300' }} flex items-center justify-center border-2 border-white">
+                                    <div class="w-2 h-2 {{ $item['is_completed'] ? 'bg-white' : 'bg-gray-300' }} rounded-full"></div>
+                                </div>
+                                <span class="text-xs mt-1 text-gray-400">{{ $item['date']->format('d/m/Y') }}</span>
+                                <div class="mt-2 text-center w-32">
+                                    <p class="text-sm text-gray-600 font-medium">{{ $item['title'] }}</p>
+                                    <p class="text-xs text-gray-500">{{ $item['description'] }}</p>
+                                </div>
                             </div>
-                            <span
-                                class="text-xs mt-1 text-gray-400">{{ $user->contract->start_date ?? '--' }}</span>
-                            <div class="mt-2 text-center w-32">
-                                <p class="text-sm text-gray-600 font-medium">Contrat</p>
-                                <p class="text-xs text-gray-500">Type:
-                                    {{ $user->contract ? $user->contract->typeContract : '--' }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Certification -->
-                        <div class="flex flex-col items-center">
-                            <div
-                                class="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center">
-                                <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-                            </div>
-                            <span class="text-xs mt-1 text-gray-400">{{ $user->certification_date ?? '--' }}</span>
-                            <div class="mt-2 text-center w-32">
-                                <p class="text-sm text-gray-600 font-medium">Certification:
-                                    {{ $user->certification ?? '--' }}</p>
-                                <p class="text-xs text-gray-500">Certified</p>
-                                <p class="text-xs text-gray-500">Actif</p>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -85,51 +108,45 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-medium text-gray-600">Contrat</h3>
-                        <p class="text-sm text-gray-600">Type |
-                            {{ $user->contract ? $user->contract->typeContract : '--' }}</p>
+                        <p class="text-sm text-gray-600">Type | {{ $user->contract ? $user->contract->typeContract : '--' }}</p>
                     </div>
                 </div>
 
                 <div class="bg-white border rounded-lg overflow-hidden">
-                    <div class="border-b hover:bg-gray-50">
-                        <div class="flex justify-between py-3 px-4 items-center">
-                            <div class="flex items-center">
-                                <div class="bg-violet-600 p-2 rounded text-white mr-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                    @foreach($carieres as $carriere)
+                        <div class="border-b hover:bg-gray-50">
+                            <div class="flex justify-between py-3 px-4 items-center">
+                                <div class="flex items-center">
+                                    <div class="bg-violet-600 p-2 rounded text-white mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-600">{{ $carriere->title }}</span>
                                 </div>
-                                <span class="text-sm text-gray-600">Date</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-600">{{ $user->recruitment_date ?? '--' }}</span>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($carriere->date_position)->format('d/m/Y') }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
 
+                    <!-- Département section -->
                     <div class="border-b hover:bg-gray-50">
                         <div class="flex justify-between py-3 px-4 items-center">
                             <div class="flex items-center">
                                 <div class="bg-violet-600 p-2 rounded text-white mr-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4zM6 9a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zm3 1a1 1 0 012 0v3a1 1 0 11-2 0v-3zm5-1a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4zM6 9a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zm3 1a1 1 0 012 0v3a1 1 0 11-2 0v-3zm5-1a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
                                 <span class="text-sm text-gray-600">Département</span>
                             </div>
                             <div class="flex items-center">
-                                <span
-                                    class="text-sm text-gray-600">{{ $user->department ? $user->department->name : '--' }}</span>
+                                <span class="text-sm text-gray-600">{{ $user->department ? $user->department->name : '--' }}</span>
                             </div>
                         </div>
                     </div>
-
                     <div class="border-b hover:bg-gray-50">
                         <div class="flex justify-between py-3 px-4 items-center">
                             <div class="flex items-center">
@@ -200,74 +217,42 @@
                 </div>
             </div>
 
-            <!-- Cursus Form Section -->
-            <div id="cursusFormContainer" class="hidden px-8 py-6 bg-gray-50">
-                <div class="bg-white shadow-md rounded-lg p-6">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-700">Créer un Nouveau Cursus</h2>
-
-                    <form action="" method="POST" id="cursusForm">
+            <!-- Add to cursus form -->
+            <div id="cursusForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h2 class="text-lg font-medium mb-4">Ajouter un élément au cursus</h2>
+                    {{-- {{ route('carieres.store') }} --}}
+                    <form action="" method="POST">
                         @csrf
+                        {{-- <input type="hidden" name="user_id" value="{{ $user->id }}"> --}}
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="career_type" class="block text-sm font-medium text-gray-700">Type de
-                                    Carrière</label>
-                                <select name="career_type" id="career_type"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
-                                    required>
-                                    <option value="">Sélectionner un type de carrière</option>
-                                    <option value="developpeur">Développeur</option>
-                                    <option value="designer">Designer</option>
-                                    <option value="manager">Manager</option>
-                                    <option value="autre">Autre</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="grade" class="block text-sm font-medium text-gray-700">Grade</label>
-                                <select name="grade" id="grade"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
-                                    required>
-                                    <option value="">Sélectionner un grade</option>
-                                    <option value="junior">Junior</option>
-                                    <option value="intermediate">Intermédiaire</option>
-                                    <option value="senior">Senior</option>
-                                    <option value="expert">Expert</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700">Date de
-                                    Début</label>
-                                <input type="date" name="start_date" id="start_date"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
-                                    required>
-                            </div>
-
-                            <div>
-                                <label for="certification"
-                                    class="block text-sm font-medium text-gray-700">Certification</label>
-                                <input type="text" name="certification" id="certification"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
-                                    placeholder="Nom de la certification">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label for="remarks" class="block text-sm font-medium text-gray-700">Remarques</label>
-                                <textarea name="remarks" id="remarks" rows="3"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
-                                    placeholder="Observations ou commentaires supplémentaires"></textarea>
-                            </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                                Titre
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" name="title" required>
                         </div>
-
-                        <div class="mt-6 flex justify-end space-x-4">
-                            <button type="button" id="cancelButton"
-                                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
-                                Annuler
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                                Description
+                            </label>
+                            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="date_position">
+                                Date
+                            </label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="date_position" type="date" name="date_position" required>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <button class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                Ajouter
                             </button>
-                            <button type="submit"
-                                class="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-blue-600 transition">
-                                Enregistrer
+                            <button type="button" id="cancelCursusForm" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Annuler
                             </button>
                         </div>
                     </form>
@@ -290,27 +275,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleButton = document.getElementById('toggleCursusForm');
-            const cursusFormContainer = document.getElementById('cursusFormContainer');
-            const form = document.getElementById('cursusForm');
-            const cancelButton = document.getElementById('cancelButton');
-            const details = document.getElementById('details');
+            const cursusForm = document.getElementById('cursusForm');
+            const cancelButton = document.getElementById('cancelCursusForm');
 
-            if (toggleButton && cursusFormContainer && form && cancelButton && details) {
-                toggleButton.addEventListener('click', function() {
-                    cursusFormContainer.classList.toggle('hidden');
-                    details.classList.toggle('hidden');
-                });
+            // Toggle form visibility
+            toggleButton.addEventListener('click', function() {
+                cursusForm.classList.toggle('hidden');
+            });
 
-                cancelButton.addEventListener('click', function() {
-                    form.reset();
-                    cursusFormContainer.classList.add('hidden');
-                    details.classList.remove('hidden');
-                });
-            } else {
-                console.error('Un ou plusieurs éléments nécessaires sont manquants dans le DOM.');
-            }
+            // Cancel button action
+            cancelButton.addEventListener('click', function() {
+                document.querySelector('#cursusForm form').reset();
+                cursusForm.classList.add('hidden');
+            });
         });
     </script>
     @endpush
-
-@endsection          
+@endsection
