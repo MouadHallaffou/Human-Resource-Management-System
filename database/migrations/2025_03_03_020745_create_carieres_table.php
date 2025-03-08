@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('contract')->nullable();
             $table->string('role')->nullable();
             $table->string('departement')->nullable();
+            $table->string('grade')->nullable();
             $table->date('rectement_date')->nullable();
             $table->float('salary')->nullable();
             $table->timestamps();
