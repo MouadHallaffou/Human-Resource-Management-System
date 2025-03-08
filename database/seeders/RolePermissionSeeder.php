@@ -21,6 +21,9 @@ class RolePermissionSeeder extends Seeder
             'view-hierarchy',
             'view-demandes', 
             'create-demande-conge', 
+            'recuperation-rh',
+            'demande-recuperation',
+            'view-all-recuperation',
         ];
 
         foreach ($permissions as $permission) {
@@ -29,7 +32,7 @@ class RolePermissionSeeder extends Seeder
 
         $adminRole = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
         $adminRole->syncPermissions([
-            'view-users', 'view-departments', 'view-formations', 'view-contracts',
+            'view-users', 'view-departments', 'view-formations', 'view-contracts','recuperation-rh',
             'view-jobs', 'view-career', 'view-hierarchy', 'view-demandes','create-demande-conge', 
         ]);
 
