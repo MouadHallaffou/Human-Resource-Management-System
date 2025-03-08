@@ -26,7 +26,7 @@
         <div class="hidden md:flex flex-col w-50 bg-gray-800 rounded-2xl">
             <div class="flex flex-col flex-1 overflow-y-auto">
                 <nav
-                    class="flex flex-col flex-1 overflow-y-auto bg-gradient-to-b from-gray-700 to-blue-500 px-2 py-4 gap-10">
+                    class="flex flex-col flex-1 overflow-y-auto bg-gradient-to-b from-gray-700 to-blue-500 px-2 py-4 gap-6">
 
                     <div>
                         <a href="{{ route('dashboard') }}"
@@ -37,7 +37,7 @@
                             @elseif(auth()->user()->hasRole('Manager'))
                                 Dashboard Manager
                             @elseif(auth()->user()->hasRole('RH Manager'))
-                                Dashboard RH 
+                                Dashboard RH
                             @elseif(auth()->user()->hasRole('Employé'))
                                 Dashboard Employé
                             @else
@@ -89,20 +89,40 @@
                         @endcan
 
                         @can('create-demande-conge')
-                        <a href="{{ route('conges.index') }}"
-                            class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
-                            <i class="fas fa-paper-plane mr-2"></i>
-                            Demande Conge
-                        </a>
+                            <a href="{{ route('conges.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Demande Conge
+                            </a>
                         @endcan
 
                         @can('view-demandes')
-                        <a href="{{ route('conges.actions') }}"
-                            class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
-                            <i class="fas fa-envelope-open-text mr-2"></i>
-                            All demandes
-                        </a>
+                            <a href="{{ route('conges.actions') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-envelope-open-text mr-2"></i>
+                                All demandes
+                            </a>
                         @endcan
+
+                        {{-- @can('view-recuperation') --}}
+                        @if (auth()->user()->hasRole('Manager') || auth()->user()->hasRole('Employé'))
+                            <a href="{{ route('recuperations.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-clipboard-list mr-2"></i>
+                                Demande Recuperation
+                            </a>
+                        @endif
+                        {{-- @endcan --}}
+
+                        {{-- @can('recuperation-rh') --}}
+                        @if (auth()->user()->hasRole('RH Manager'))
+                            <a href="{{ route('recuperations.actions') }}"
+                                class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
+                                <i class="fas fa-inbox mr-2"></i>
+                                All Recuperations
+                            </a>
+                        @endif
+                        {{-- @endcan --}}
 
                         @can('view-career')
                             <a href="{{ route('users.cariere', auth()->user()->id) }}"
@@ -129,7 +149,7 @@
         <div class="flex flex-col flex-1 overflow-y-auto">
             <!-- Navigation -->
             <livewire:layout.navigation />
-            
+
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white dark:bg-gray-800 shadow">
