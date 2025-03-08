@@ -22,6 +22,7 @@ class UserController extends Controller
     public function index()
     {
         $user = auth()->user();
+        // dd($user);
         if ($user->hasRole('Employé')) {
             $users = User::with(['roles', 'department', 'contract', 'joob'])
                 ->where('id', $user->id)
@@ -69,6 +70,7 @@ class UserController extends Controller
             'password' => Hash::make($password),
             'image' => $imagePath,
             'grade' => $request->grade,
+            'jours_recuperation' => 0,
         ]);
 
         if ($user) {
@@ -84,6 +86,7 @@ class UserController extends Controller
                 'departement' => $department,
                 'role' => $role,
                 'contract' => $contract,
+                'grade' =>$user->grade,
             ]);
         }
 
@@ -106,36 +109,57 @@ class UserController extends Controller
 
 
     public function update(UpdateUserRequest $request, User $user)
-    {
-        $imagePath = $user->image;
-        if ($request->hasFile('image')) {
-            if ($user->image && Storage::disk('public')->exists($user->image)) {
-                Storage::disk('public')->delete($user->image);
-            }
-            $imagePath = $request->file('image')->store('users', 'public');
+{
+    // Gestion de l'image
+    $imagePath = $user->image;
+    if ($request->hasFile('image')) {
+        if ($user->image && Storage::disk('public')->exists($user->image)) {
+            Storage::disk('public')->delete($user->image);
         }
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'birthday' => $request->birthday,
-            'address' => $request->address,
-            'recruitment_date' => $request->recruitment_date,
-            'salary' => $request->salary,
-            'status' => $request->status,
-            'department_id' => $request->department_id,
-            'contract_id' => $request->contract_id,
-            'job_id' => $request->job_id,
-            'image' => $imagePath,
-            'grade' => $request->grade, 
-        ]);
-
-        $role = Role::find($request->role_id);
-        $user->syncRoles([$role]);
-
-        return redirect()->route('users.index')->with('success', 'Employé mis à jour avec succès.');
+        $imagePath = $request->file('image')->store('users', 'public');
     }
+
+    // Mise à jour des informations de l'utilisateur
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'birthday' => $request->birthday,
+        'address' => $request->address,
+        'recruitment_date' => $request->recruitment_date,
+        'salary' => $request->salary,
+        'status' => $request->status,
+        'department_id' => $request->department_id,
+        'contract_id' => $request->contract_id,
+        'job_id' => $request->job_id,
+        'image' => $imagePath,
+        'grade' => $request->grade,
+        'jours_recuperation' => $request->jours_recuperation, 
+    ]);
+
+    // Attribuer le rôle à l'utilisateur
+    $role = Role::find($request->role_id);
+    $user->syncRoles([$role]);
+
+    // Récupérer les nouvelles informations pour la table cariere
+    $department = Departement::find($request->department_id)->name;
+    $roleName = Role::find($request->role_id)->name;
+    $contract = Contract::find($request->contract_id)->typeContract;
+
+    // Créer une nouvelle entrée dans la table cariere
+    Cariere::create([
+        'user_id' => $user->id,
+        'date_position' => now(), 
+        'recruitment_date' => $user->recruitment_date,
+        'salary' => $user->salary,
+        'departement' => $department,
+        'role' => $roleName,
+        'contract' => $contract,
+        'grade' =>$user->grade,
+    ]);
+
+    return redirect()->route('users.index')->with('success', 'Employé mis à jour avec succès.');
+}
 
 
     public function show(User $user)

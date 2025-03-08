@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFormationRequest extends FormRequest
@@ -21,12 +22,13 @@ class StoreFormationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $today = Carbon::today();
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'location' => 'required|in:online,offline',
             'certificate' => 'required|boolean', 
-            'start_date' => 'required|date',
+            'start_date' => 'required|date|after_or_equal:' . $today,
             'end_date' => 'required|date|after:start_date',
             'users' => 'nullable|array',
             'users.*' => 'exists:users,id',
