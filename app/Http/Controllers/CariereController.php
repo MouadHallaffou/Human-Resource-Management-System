@@ -12,12 +12,20 @@ class CariereController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($userId)
-    {
-        $user = User::findOrFail($userId);
-        $user->load('roles', 'department', 'contract', 'joob');
-        return view('users.show', compact('user'));
-    }
+    // Dans CarriereController.php
+public function index($userId)
+{
+    // Récupérer l'utilisateur avec ses relations
+    $user = User::with(['roles', 'department', 'contract', 'joob', 'carieres', 'formations'])->findOrFail($userId);
+    
+    // Récupérer l'historique des carrières trié par date
+    $carieres = $user->carieres()->orderBy('date_position', 'desc')->get();
+    
+    // Récupérer les formations sans tri pour l'instant
+    $formations = $user->formations()->get();
+    
+    return view('users.show', compact('user', 'carieres', 'formations'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -34,14 +42,21 @@ class CariereController extends Controller
     public function store(StoreCariereRequest $request)
     {
         $request->validate([
-            'newPosition' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'date_position' => 'required|date',
         ]);
 
-        Cariere::create($request->all());
+        Cariere::create([
+            'user_id' => $request->user_id,
+            'position' => $request->title,
+            'description' => $request->description,
+            'date_position' => $request->date_position,
+        ]);
 
-        return redirect()->route('carieres.index')->with('success', 'Carrière créée avec succès.');
+        return redirect()->route('cariere.index', $request->user_id)
+            ->with('success', 'Élément ajouté au cursus avec succès');
     }
 
     /**

@@ -20,15 +20,17 @@ class CongeController extends Controller
         $moisTravail = $dateEmbauche->diffInMonths($aujourdHui);
         $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
 
+        // Calcul des jours de congé disponibles
         if ($anneesTravail >= 1) {
+            // 18 jours pour la première année + 0,5 jour par année supplémentaire
             $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
         } else {
+            // 1,5 jour par mois travaillé si l'employé n'a pas encore complété une année
             $joursDisponibles = $moisTravail * 1.5;
         }
 
         return view('conges.index', compact('conges', 'joursDisponibles'));
     }
-
 
     public function create()
     {
@@ -60,8 +62,10 @@ class CongeController extends Controller
         $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
 
         if ($anneesTravail >= 1) {
+            // 18 jours pour la première année + 0,5 jour par année supplémentaire
             $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
         } else {
+            // 1,5 jour par mois travaillé si l'employé n'a pas encore complété une année
             $joursDisponibles = $moisTravail * 1.5;
         }
 
@@ -94,7 +98,6 @@ class CongeController extends Controller
 
         return redirect()->route('conges.index')->with('success', 'Demande de congé soumise avec succès.');
     }
-
 
     // Valider la demande par le manager
     public function approveByManager($id)
@@ -169,22 +172,78 @@ class CongeController extends Controller
             if (!$department) {
                 return redirect()->route('conges.index')->with('error', 'Vous n\'êtes pas assigné à un département.');
             }
-            //demandes de congé ce département en attente
             $conges = Conge::whereHas('user', function ($query) use ($department) {
                 $query->where('department_id', $department->id);
             })->where('status_manager', 'pending')->get();
         }
         // si l'utilisateur : RH Manager
         elseif ($user->hasRole('RH Manager')) {
-            // demandes RHs en attente de validation par RH
             $conges = Conge::where('status_rh_manager', 'pending')->get();
-        }
-        // Sinon, accès refusé
-        else {
+        } else {
             return redirect()->route('conges.index')->with('error', 'Vous n\'avez pas les permissions pour accéder à cette page.');
         }
 
         return view('conges.actions', compact('conges'));
+    }
+
+    public function edit(Conge $conge)
+    {
+        $user = auth()->user();
+        if ($conge->user_id !== $user->id) {
+            return redirect()->route('conges.index')->with('error', 'Vous n\'êtes pas autorisé à modifier cette demande.');
+        }
+
+        return view('conges.edit', compact('conge'));
+    }
+
+    public function update(Request $request, Conge $conge)
+    {
+        $user = auth()->user();
+
+        if ($conge->user_id !== $user->id) {
+            return redirect()->route('conges.index')->with('error', 'Vous n\'êtes pas autorisé à modifier cette demande.');
+        }
+
+        $aujourdHui = Carbon::today();
+        $request->validate([
+            'start_date' => 'required|date|after_or_equal:' . $aujourdHui->addWeek(),
+            'end_date' => 'required|date|after:start_date',
+            'cause' => 'nullable|string',
+        ]);
+
+        $dateDebut = Carbon::parse($request->start_date);
+        $dateFin = Carbon::parse($request->end_date);
+        $totalJours = $dateDebut->diffInDaysFiltered(function ($date) {
+            return !$date->isWeekend(); // Exclure weekend
+        }, $dateFin);
+
+        // Calcul des jours de congé disponibles
+        $dateEmbauche = Carbon::parse($user->recruitment_date);
+        $moisTravail = $dateEmbauche->diffInMonths($aujourdHui);
+        $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
+
+        if ($anneesTravail >= 1) {
+            // 18 jours pour la première année + 0,5 jour par année supplémentaire
+            $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
+        } else {
+            // 1,5 jour par mois travaillé si l'employé n'a pas encore complété une année
+            $joursDisponibles = $moisTravail * 1.5;
+        }
+
+        // Vérifier si le nombre de jours demandés dépasse le solde disponible
+        if ($totalJours > $joursDisponibles) {
+            return redirect()->route('conges.edit', $conge)->with('error_conge', 'La durée de votre demande dépasse votre solde de congés disponible : ' . intval($joursDisponibles) . ' jours');
+        }
+
+        // Mettre à jour la demande de congé
+        $conge->update([
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'total_days' => $totalJours,
+            'cause' => $request->cause,
+        ]);
+
+        return redirect()->route('conges.index')->with('success', 'Demande de congé mise à jour avec succès.');
     }
 
     /**
