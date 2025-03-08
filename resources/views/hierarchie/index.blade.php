@@ -22,6 +22,9 @@
                             <div class="border border-red-600 bg-white flex items-center justify-center px-2 py-1 rounded-md">
                                 <span class="text-sm font-medium text-gray-800 whitespace-nowrap">{{ $admin->name }}</span>
                             </div>
+                            <div class="mt-1">
+                                <span class="text-xs text-gray-600">Administrateur</span>
+                            </div>
                         </a>
                     </div>
                 @endif
@@ -41,6 +44,9 @@
                                 <div class="border border-yellow-400 bg-white flex items-center justify-center px-2 py-1 rounded-md">
                                     <span
                                         class="text-sm font-medium text-gray-800 whitespace-nowrap">{{ $rh->name }}</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="text-xs text-gray-600">Responsable RH</span>
                                 </div>
                             </a>
                         @endforeach
@@ -63,6 +69,9 @@
                                     <span
                                         class="text-xs font-medium text-gray-800 whitespace-nowrap">{{ $manager->name }}</span>
                                 </div>
+                                <div class="mt-1">
+                                    <span class="text-xs text-gray-600">Manager</span>
+                                </div>
                             </a>
                         @endforeach
                     </div>
@@ -83,6 +92,9 @@
                                 <div class="border border-green-600 bg-white flex items-center justify-center px-2 py-1 rounded-md">
                                     <span
                                         class="text-xs font-medium text-gray-800 whitespace-nowrap">{{ $employee->name }}</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="text-xs text-gray-600">Employé</span>
                                 </div>
                             </a>
                         @endforeach
