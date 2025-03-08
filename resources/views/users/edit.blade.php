@@ -228,6 +228,19 @@
                     
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                    <!-- jours-recupere -->
+                    <div>
+                        <label for="jours_recuperation" class="block mb-2 text-sm font-medium text-gray-700">Jours de récupération :</label>
+                        <input type="number" name="jours_recuperation" id="jours_recuperation" value="{{ old('jours_recuperation', $user->jours_recuperation) }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition duration-300 ease-in-out @error('jours_recuperation') border-red-500 @enderror"
+                            placeholder="Entrez les jours de récupération">
+                        @error('jours_recuperation')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <!-- Boutons -->
                 <div class="flex space-x-6 justify-end mt-6">
                     <button type="submit"
@@ -244,19 +257,17 @@
     </div>
 
     <script>
-        // Convertir les jobs groupés en un objet JavaScript
+        // Convertir les jobs groups en un objet JavaScript
         const jobsByDepartment = @json($joobs);
 
-        // Écouter les changements dans le champ "Département"
         document.getElementById('department_id').addEventListener('change', function() {
             const departmentId = this.value;
             const jobSelect = document.getElementById('job_id');
 
-            // Vider la liste des jobs
             jobSelect.innerHTML = '<option value="">Sélectionnez un job</option>';
 
             if (departmentId && jobsByDepartment[departmentId]) {
-                // Ajouter les jobs du département sélectionné
+
                 jobsByDepartment[departmentId].forEach(job => {
                     const option = document.createElement('option');
                     option.value = job.id;
@@ -264,7 +275,6 @@
                     jobSelect.appendChild(option);
                 });
 
-                // Sélectionner le job actuel de l'utilisateur
                 const currentJobId = "{{ old('job_id', $user->job_id) }}";
                 if (currentJobId) {
                     jobSelect.value = currentJobId;

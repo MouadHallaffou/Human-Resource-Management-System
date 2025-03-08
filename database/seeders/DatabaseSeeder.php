@@ -18,16 +18,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(1)->create();
+        User::factory(1)->create();
 
         $this->call([
-            // RoleSeeder::class,
-            // PermissionSeeder::class,
-            // CompanySeeder::class,
-            // DepartementSeeder::class,
-            // ContractSeeder::class,
-            // JoobsSeeder::class,
-            // FormationSeeder::class,
+            RoleSeeder::class,
+            PermissionSeeder::class,
+            CompanySeeder::class,
+            DepartementSeeder::class,
+            ContractSeeder::class,
+            JoobsSeeder::class,
+            FormationSeeder::class,
             RolePermissionSeeder::class,
         ]);
 

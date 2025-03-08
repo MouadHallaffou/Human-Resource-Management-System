@@ -22,7 +22,9 @@ class PermissionSeeder extends Seeder
             'view-career',
             'view-hierarchy',
             'view-demandes', 
-            'create-demande-conge', 
+            'create-demande-conge',
+            'demande-recuperation',
+            'view-all-recuperation',
         ];
 
         foreach ($permissions as $permission) {

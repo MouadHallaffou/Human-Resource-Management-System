@@ -45,9 +45,8 @@ class CongeController extends Controller
         $dateDebut = Carbon::parse($request->start_date);
         $dateFin = Carbon::parse($request->end_date);
 
-        // Calcul des jours de congé en excluant les weekends
         $totalJours = $dateDebut->diffInDaysFiltered(function ($date) {
-            return !$date->isWeekend(); // Exclure weekend
+            return !$date->isWeekend();
         }, $dateFin);
 
         $request->validate([
@@ -56,25 +55,20 @@ class CongeController extends Controller
             'cause' => 'nullable|string',
         ]);
 
-        // Calcul des jours de congé disponibles
         $dateEmbauche = Carbon::parse($utilisateur->recruitment_date);
         $moisTravail = $dateEmbauche->diffInMonths($aujourdHui);
         $anneesTravail = $dateEmbauche->diffInYears($aujourdHui);
 
         if ($anneesTravail >= 1) {
-            // 18 jours pour la première année + 0,5 jour par année supplémentaire
             $joursDisponibles = 18 + ($anneesTravail - 1) * 0.5;
         } else {
-            // 1,5 jour par mois travaillé si l'employé n'a pas encore complété une année
             $joursDisponibles = $moisTravail * 1.5;
         }
 
-        // Vérifier si le nombre de jours demandés dépasse le solde disponible
         if ($totalJours > $joursDisponibles) {
             return redirect()->route('conges.create')->with('error_conge', 'La durée de votre demande dépasse votre solde de congés disponible : ' . intval($joursDisponibles) . ' jours');
         }
 
-        // Définir les statuts de validation
         if ($utilisateur->hasRole('Manager')) {
             $statutManager = 'approved';
         } else {
@@ -84,7 +78,6 @@ class CongeController extends Controller
         $statutRhManager = 'pending';
         $statutDemandeur = 'pending';
 
-        // Créer la demande de congé
         Conge::create([
             'user_id' => $utilisateur->id,
             'start_date' => $request->start_date,
@@ -176,7 +169,7 @@ class CongeController extends Controller
                 $query->where('department_id', $department->id);
             })->where('status_manager', 'pending')->get();
         }
-        // si l'utilisateur : RH Manager
+        // si user : RH Manager
         elseif ($user->hasRole('RH Manager')) {
             $conges = Conge::where('status_rh_manager', 'pending')->get();
         } else {

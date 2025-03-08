@@ -23,6 +23,7 @@ class Cariere extends Model
         'departement',
         'recruitment_date',
         'salary',
+        'grade',
     ];
 
     /**

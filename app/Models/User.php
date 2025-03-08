@@ -34,6 +34,7 @@ class User extends Authenticatable
         'contract_id',
         'job_id',
         'grade',
+        'jours_recuperation',
     ];
 
 
@@ -79,14 +80,25 @@ class User extends Authenticatable
         return $this->belongsTo(Joobs::class, 'job_id');
     }
 
-    public function formations()
-    {
-        return $this->belongsToMany(Formation::class);
-    }
-
     public function manager()
     {
         return $this->department ? $this->department->manager : null;
+    }
+
+    /**
+     * Relation avec les carrières de l'utilisateur
+     */
+    public function carieres()
+    {
+        return $this->hasMany(Cariere::class);
+    }
+
+    /**
+     * Relation avec les formations de l'utilisateur
+     */
+    public function formations()
+    {
+        return $this->belongsToMany(Formation::class);
     }
  
 }

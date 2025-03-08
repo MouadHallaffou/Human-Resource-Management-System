@@ -231,7 +231,6 @@
                 </div>              
             </div>
 
-            <!-- Boutons -->
             <div class="flex space-x-6 justify-start mt-6">
                 <button type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
@@ -247,19 +246,16 @@
 </div>
 
 <script>
-    // Convertir les jobs groupés en un objet JavaScript
     const jobsByDepartment = @json($joobs);
 
-    // Écouter les changements dans le champ "Département"
     document.getElementById('department_id').addEventListener('change', function () {
         const departmentId = this.value;
         const jobSelect = document.getElementById('job_id');
 
-        // Vider la liste des jobs
         jobSelect.innerHTML = '<option value="">Sélectionnez un job</option>';
 
         if (departmentId && jobsByDepartment[departmentId]) {
-            // Ajouter les jobs du département sélectionné
+
             jobsByDepartment[departmentId].forEach(job => {
                 const option = document.createElement('option');
                 option.value = job.id;

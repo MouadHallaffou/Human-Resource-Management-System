@@ -35,7 +35,7 @@ class PermissionFactory extends Factory
                 'view-contract',
                 'approve-leave',
                 'reject-leave',
-                'manage-payroll',
+                'manage-payroll',    
                 'generate-reports',
             ]),
             'guard_name' => 'web',

@@ -278,12 +278,10 @@
             const cursusForm = document.getElementById('cursusForm');
             const cancelButton = document.getElementById('cancelCursusForm');
 
-            // Toggle form visibility
             toggleButton.addEventListener('click', function() {
                 cursusForm.classList.toggle('hidden');
             });
 
-            // Cancel button action
             cancelButton.addEventListener('click', function() {
                 document.querySelector('#cursusForm form').reset();
                 cursusForm.classList.add('hidden');
