@@ -35,7 +35,8 @@ class UpdateUserRequest extends FormRequest
             'contract_id' => 'nullable|integer',
             'job_id' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'grade' => 'nullable|in:debutant,junior,senior,expert', // Ajoutez cette ligne si nécessaire
+            'grade' => 'nullable|in:debutant,junior,senior,expert', 
+            'jours_recuperation' => 'nullable|integer|min:0',
         ];
     }
 }
