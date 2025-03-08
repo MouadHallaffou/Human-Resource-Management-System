@@ -104,25 +104,25 @@
                             </a>
                         @endcan
 
-                        {{-- @can('view-recuperation') --}}
-                        @if (auth()->user()->hasRole('Manager') || auth()->user()->hasRole('Employé'))
+                        @can('view-recuperation')
+                        {{-- @if (auth()->user()->hasRole('Manager') || auth()->user()->hasRole('Employé')) --}}
                             <a href="{{ route('recuperations.index') }}"
                                 class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
                                 <i class="fas fa-clipboard-list mr-2"></i>
                                 Demande Recuperation
                             </a>
-                        @endif
-                        {{-- @endcan --}}
+                        {{-- @endif --}}
+                        @endcan
 
-                        {{-- @can('recuperation-rh') --}}
-                        @if (auth()->user()->hasRole('RH Manager'))
+                        @can('recuperation-rh')
+                        {{-- @if (auth()->user()->hasRole('RH Manager')) --}}
                             <a href="{{ route('recuperations.actions') }}"
                                 class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl">
                                 <i class="fas fa-inbox mr-2"></i>
                                 All Recuperations
                             </a>
-                        @endif
-                        {{-- @endcan --}}
+                        {{-- @endif --}}
+                        @endcan
 
                         @can('view-career')
                             <a href="{{ route('users.cariere', auth()->user()->id) }}"
