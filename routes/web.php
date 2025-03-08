@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\HierarchieController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\RecuperationController;
 
 Route::view('/', 'welcome');
 
@@ -49,6 +50,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/conges/{id}/reject', [CongeController::class, 'reject'])->name('conges.reject');
     Route::get('/conges/actions', [CongeController::class, 'actions'])->name('conges.actions');
     Route::delete('/conges/{conge}', [CongeController::class, 'destroy'])->name('conges.destroy');
+    Route::get('/conges/{conge}/edit', [CongeController::class, 'edit'])->name('conges.edit');
+    Route::put('/conges/{conge}', [CongeController::class, 'update'])->name('conges.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/recuperations/actions', [RecuperationController::class, 'actions'])->name('recuperations.actions');
+    Route::get('/recuperations/create', [RecuperationController::class, 'create'])->name('recuperations.create');
+    Route::post('/recuperations', [RecuperationController::class, 'store'])->name('recuperations.store');
+    Route::get('/recuperations', [RecuperationController::class, 'index'])->name('recuperations.index');
+    Route::post('/recuperations/{id}/approve', [RecuperationController::class, 'approve'])->name('recuperations.approve');
+    Route::post('/recuperations/{id}/reject', [RecuperationController::class, 'reject'])->name('recuperations.reject');
+    Route::delete('/recuperations/{id}/cancel', [RecuperationController::class, 'cancel'])->name('recuperations.cancel');
+    Route::get('/recuperations/{id}/edit', [RecuperationController::class, 'edit'])->name('recuperations.edit');
+    Route::put('/recuperations/{id}', [RecuperationController::class, 'update'])->name('recuperations.update');
 });
 
 require __DIR__ . '/auth.php';
