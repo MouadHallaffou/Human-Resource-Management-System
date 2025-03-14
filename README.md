@@ -54,9 +54,9 @@ MAIL_MAILER=smtp
 MAIL_SCHEME=null
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=mouadhallaffou@gmail.com
-MAIL_PASSWORD=qamaehowtmtpohpn
-MAIL_FROM_ADDRESS="mouadhallaffou@gmail.com"
+MAIL_USERNAME=test@gmail.com
+MAIL_PASSWORD=*********
+MAIL_FROM_ADDRESS="test@gmail.com"
 MAIL_FROM_NAME="${APP_NAME}".
 ```
 
